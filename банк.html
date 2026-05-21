@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Империя Кисару Банк</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    :root {
+      --primary: #8A2BE2;
+      --primary-light: #9B59B6;
+      --primary-dark: #6A1B9A;
+      --bg: #0a0a14;
+      --surface: rgba(20, 20, 35, 0.7);
+      --surface2: rgba(30, 30, 50, 0.7);
+      --text: #e0d9f5;
+      --text2: #9b8ec4;
+      --danger: #e0556a;
+      --success: #3ecf8e;
+      --info: #5b9cf5;
+      --border: rgba(138, 43, 226, 0.25);
+      --shadow: 0 8px 32px rgba(138, 43, 226, 0.15);
+      --radius: 20px;
+      --btn-radius: 14px;
+      --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      --glass-bg: rgba(20, 20, 40, 0.6);
+      --glass-border: rgba(138, 43, 226, 0.3);
+      --font-size: 16px;
+    }
+    body.light {
+      --bg: #f0eef7;
+      --surface: rgba(255, 255, 255, 0.85);
+      --surface2: rgba(245, 245, 255, 0.85);
+      --text: #1a1a2e;
+      --text2: #5a5a7a;
+      --border: rgba(138, 43, 226, 0.3);
+      --glass-bg: rgba(255, 255, 255, 0.75);
+      --glass-border: rgba(138, 43, 226, 0.4);
+    }
+    body.no-animations * {
+      transition: none !important;
+      animation: none !important;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--font-size);
+      transition: background var(--transition), color var(--transition);
+    }
+    #app {
+      width: 100%;
+      max-width: 420px;
+      min-height: 100vh;
+      background: transparent;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow);
+    }
+    @media (min-width: 420px) {
+      #app {
+        border-radius: 32px;
+        margin: 20px 0;
+      }
+    }
+    .screen {
+      display: none;
+      flex-direction: column;
+      flex: 1;
+      padding: 16px 16px 90px;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .screen.active {
+      display: flex;
+    }
+    .auth-screen {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      padding: 40px 24px;
+      justify-content: center;
+      background: var(--bg);
+    }
+    .glass-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow);
+    }
+    .btn {
+      padding: 14px 20px;
+      border: none;
+      border-radius: var(--btn-radius);
+      font-weight: 600;
+      font-family: inherit;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all var(--transition);
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #fff;
+      letter-spacing: 0.3px;
+      box-shadow: 0 4px 16px rgba(138, 43, 226, 0.3);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn.secondary {
+      background: var(--surface2);
+      color: var(--text);
+      box-shadow: none;
+    }
+    .btn.danger {
+      background: linear-gradient(135deg, #e0556a, #c0392b);
+      box-shadow: 0 4px 16px rgba(224,85,106,0.25);
+    }
+    .btn.small {
+      padding: 8px 14px;
+      font-size: 0.8rem;
+      border-radius: 12px;
+    }
+    .bottom-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--surface);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: flex-start;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 8px 0 12px;
+      z-index: 100;
+      gap: 4px;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .bottom-bar::-webkit-scrollbar { display: none; }
+    .tab-item {
+      flex: 0 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.6rem;
+      font-weight: 600;
+      color: var(--text2);
+      cursor: pointer;
+      transition: color var(--transition);
+      padding: 4px 10px;
+      min-width: 60px;
+      text-align: center;
+      border-radius: 12px;
+    }
+    .tab-item i { font-size: 1.3rem; }
+    .tab-item.active {
+      color: var(--primary);
+      background: rgba(138, 43, 226, 0.15);
+    }
+    .balance-display {
+      font-size: 2.4rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--primary-light), #e0b0ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 200;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    .modal {
+      background: var(--surface);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-radius: 24px 24px 0 0;
+      padding: 24px 20px 30px;
+      width: 100%;
+      max-width: 420px;
+      max-height: 85vh;
+      overflow-y: auto;
+      box-shadow: 0 -8px 40px rgba(0,0,0,0.5);
+    }
+    .toast {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--primary-dark);
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 30px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      z-index: 300;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+      animation: slideDown 0.3s ease;
+    }
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+      to { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+    .spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .crown {
+      color: gold;
+      cursor: pointer;
+      font-size: 1.2rem;
+      margin-left: 4px;
+      text-shadow: 0 0 10px gold;
+    }
+    .nickname-color-option {
+      display: inline-block;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid transparent;
+      margin: 4px;
+    }
+    .nickname-color-option.selected { border-color: var(--primary); }
+    .chart-container {
+      width: 100%;
+      height: 60px;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+(function() {
+  const APP_KEY = 'kisaruBankData';
+  const REMEMBER_KEY = 'kisaruRemembered';
+  let appData = null;
+  let currentUser = null;
+  let cryptoTimer = null;
+  let autoClickTimer = null;
+  let leaderboardTimer = null;
+  let currentTab = 'home';
+
+  // --- DATA ---
+  function loadData() {
+    const raw = localStorage.getItem(APP_KEY);
+    if (raw) {
+      try { appData = JSON.parse(raw); } catch(e) { initData(); }
+    } else { initData(); }
+    if (!appData.users) appData.users = [];
+    if (!appData.usersData) appData.usersData = {};
+    if (!appData.cryptoPrices) appData.cryptoPrices = { KSUR: 12.5, MEC: 4.2, CLAW: 0.85 };
+    if (!appData.cryptoHistory) appData.cryptoHistory = { KSUR: [], MEC: [], CLAW: [] };
+    if (!appData.lastPriceUpdate) appData.lastPriceUpdate = Date.now();
+    ensureOwner();
+  }
+  function initData() {
+    appData = {
+      users: [],
+      usersData: {},
+      cryptoPrices: { KSUR: 12.5, MEC: 4.2, CLAW: 0.85 },
+      cryptoHistory: { KSUR: [], MEC: [], CLAW: [] },
+      lastPriceUpdate: Date.now()
+    };
+  }
+  function ensureOwner() {
+    if (!appData.users.find(u => u.login === 'kisaru')) {
+      appData.users.push({ login: 'kisaru', passwordHash: btoa('kisaru123') });
+      appData.usersData['kisaru'] = createOwnerData();
+    }
+  }
+  function createOwnerData() {
+    return {
+      balance: 100000, clickPower: 100, upgradesPurchased: { power1: true, power2: true, double: true, autoclick: true },
+      lastDailyBonus: null, totalClicks: 0, activeLoans: [], deposits: [], transactionsHistory: [],
+      cryptoWallet: { KSUR: 1000, MEC: 1000, CLAW: 1000 }, cryptoTransactions: [], achievements: {},
+      totalEarned: 100000, level: 31, referralCount: 0, referredBy: null, friends: [], friendRequests: { incoming: [], outgoing: [] },
+      chats: {}, settings: { theme: 'dark', fontSize: 16, animations: true }, nicknameColor: '#FFD700',
+      orders: []
+    };
+  }
+  function saveData() { localStorage.setItem(APP_KEY, JSON.stringify(appData)); }
+  function getUserData() { return currentUser ? appData.usersData[currentUser] : null; }
+  function updateLevel(data) {
+    const total = data.totalEarned || 0;
+    data.level = Math.min(100, Math.floor(Math.sqrt(total / 100)) + 1);
+  }
+
+  // --- AUTH ---
+  function renderApp() {
+    const app = document.getElementById('app');
+    if (currentUser) {
+      renderMainUI(app);
+      startTimers();
+    } else {
+      stopTimers();
+      renderAuthUI(app);
+    }
+  }
+  function renderAuthUI(container) {
+    const remembered = localStorage.getItem(REMEMBER_KEY);
+    container.innerHTML = `
+      <div class="auth-screen">
+        <div style="text-align:center;margin-bottom:30px;" id="logoArea">
+          <i class="fa-solid fa-crown" style="font-size:3rem;color:var(--primary);"></i>
+          <h2 style="margin-top:10px;font-weight:800;">Империя Кисару Банк</h2>
+          <p style="color:var(--text2);">Ваш надёжный кошачий банк</p>
+        </div>
+        <div id="authForms">
+          <div class="glass-card">
+            <div style="display:flex;gap:8px;margin-bottom:16px;">
+              <button id="showLoginBtn" class="btn small" style="flex:1;">Вход</button>
+              <button id="showRegBtn" class="btn small secondary" style="flex:1;">Регистрация</button>
+            </div>
+            <div id="authFormContainer"></div>
+            <div style="text-align:center;margin-top:12px;">
+              <a href="#" id="forgotPasswordLink" style="color:var(--primary);text-decoration:none;font-size:0.9rem;">Забыли пароль?</a>
+            </div>
+          </div>
+          ${remembered ? `<button id="quickLoginBtn" class="btn secondary" style="margin-top:12px;width:100%;"><i class="fa-solid fa-rotate-left"></i> Захожу не первый раз</button>` : ''}
+        </div>
+      </div>
+    `;
+    document.getElementById('showLoginBtn').addEventListener('click', ()=>renderLoginForm());
+    document.getElementById('showRegBtn').addEventListener('click', ()=>renderRegisterForm());
+    if (remembered) document.getElementById('quickLoginBtn').addEventListener('click', quickLogin);
+    document.getElementById('forgotPasswordLink').addEventListener('click', (e)=>{ e.preventDefault(); showForgotPasswordModal(); });
+    renderLoginForm();
+
+    // Long press on logo to show all passwords
+    const logo = document.getElementById('logoArea');
+    let pressTimer;
+    logo.addEventListener('mousedown', startLongPress);
+    logo.addEventListener('touchstart', startLongPress);
+    logo.addEventListener('mouseup', cancelLongPress);
+    logo.addEventListener('touchend', cancelLongPress);
+    logo.addEventListener('mouseleave', cancelLongPress);
+    function startLongPress(e) {
+      pressTimer = setTimeout(() => {
+        showAllPasswordsModal();
+      }, 5000);
+    }
+    function cancelLongPress() {
+      clearTimeout(pressTimer);
+    }
+  }
+  function renderLoginForm() {
+    const container = document.getElementById('authFormContainer');
+    container.innerHTML = `
+      <form id="loginForm">
+        <div style="margin-bottom:12px;"><label style="font-size:0.8rem;color:var(--text2);">Логин</label><input name="login" style="width:100%;padding:12px;border-radius:12px;background:var(--surface2);border:1px solid var(--border);color:var(--text);" required></div>
+        <div style="margin-bottom:12px;"><label style="font-size:0.8rem;color:var(--text2);">Пароль</label><input type="password" name="password" style="width:100%;padding:12px;border-radius:12px;background:var(--surface2);border:1px solid var(--border);color:var(--text);" required></div>
+        <label style="display:flex;align-items:center;gap:8px;margin-bottom:12px;"><input type="checkbox" name="remember"> Запомнить меня</label>
+        <button type="submit" class="btn" style="width:100%;">Войти</button>
+      </form>
+    `;
+    document.getElementById('loginForm').addEventListener('submit', handleLogin);
+  }
+  function renderRegisterForm() {
+    const container = document.getElementById('authFormContainer');
+    container.innerHTML = `
+      <form id="registerForm">
+        <div style="margin-bottom:10px;"><label>Логин</label><input name="login" style="width:100%;padding:12px;border-radius:12px;background:var(--surface2);border:1px solid var(--border);color:var(--text);" required minlength="3"></div>
+        <div style="margin-bottom:10px;"><label>Пароль</label><input type="password" name="password" style="width:100%;padding:12px;border-radius:12px;background:var(--surface2);border:1px solid var(--border);color:var(--text);" required minlength="6"></div>
+        <div style="margin-bottom:10px;"><label>Подтверждение</label><input type="password" name="confirm" style="width:100%;padding:12px;border-radius:12px;background:var(--surface2);border:1px solid var(--border);color:var(--text);" required></div>
+        <button type="submit" class="btn" style="width:100%;">Зарегистрироваться</button>
+      </form>
+    `;
+    document.getElementById('registerForm').addEventListener('submit', handleRegister);
+  }
+  function handleLogin(e) {
+    e.preventDefault();
+    const login = e.target.login.value.trim().toLowerCase();
+    const pw = e.target.password.value;
+    const remember = e.target.remember.checked;
+    const user = appData.users.find(u => u.login === login);
+    if (!user || user.passwordHash !== btoa(pw)) return showToast('Неверный логин или пароль');
+    if (remember) localStorage.setItem(REMEMBER_KEY, login);
+    else localStorage.removeItem(REMEMBER_KEY);
+    loginUser(login);
+  }
+  function handleRegister(e) {
+    e.preventDefault();
+    const login = e.target.login.value.trim().toLowerCase();
+    const pw = e.target.password.value;
+    const confirm = e.target.confirm.value;
+    if (pw !== confirm) return showToast('Пароли не совпадают');
+    if (appData.users.find(u => u.login === login)) return showToast('Логин занят');
+    appData.users.push({ login, passwordHash: btoa(pw) });
+    appData.usersData[login] = createNewUserData();
+    saveData();
+    showToast('Регистрация успешна!');
+    loginUser(login);
+  }
+  function quickLogin() {
+    const remembered = localStorage.getItem(REMEMBER_KEY);
+    if (!remembered) return showToast('Нет сохранённых данных, выполните вход с паролем');
+    loginUser(remembered);
+  }
+  function loginUser(login) {
+    currentUser = login;
+    if (!appData.usersData[login]) appData.usersData[login] = createNewUserData();
+    updateLevel(getUserData());
+    saveData();
+    renderApp();
+  }
+  function logout() {
+    stopTimers();
+    currentUser = null;
+    saveData();
+    renderApp();
+  }
+  function createNewUserData() {
+    return {
+      balance: 0, clickPower: 1, upgradesPurchased: { power1: false, power2: false, double: false, autoclick: false },
+      lastDailyBonus: null, totalClicks: 0, activeLoans: [], deposits: [], transactionsHistory: [],
+      cryptoWallet: { KSUR: 0, MEC: 0, CLAW: 0 }, cryptoTransactions: [], achievements: {},
+      totalEarned: 0, level: 1, referralCount: 0, referredBy: null, friends: [], friendRequests: { incoming: [], outgoing: [] },
+      chats: {}, settings: { theme: 'dark', fontSize: 16, animations: true }, nicknameColor: '#8A2BE2',
+      orders: []
+    };
+  }
+
+  // --- Forgot Password ---
+  function showForgotPasswordModal() {
+    const overlay = document.createElement('div');
+    overlay.className = 'modal-overlay';
+    overlay.innerHTML = `
+      <div class="modal">
+        <h4>Восстановление пароля</h4>
+        <input id="forgotLogin" placeholder="Введите логин" style="width:100%;padding:10px;border-radius:12px;background:var(--surface2);border:1px solid var(--border);color:var(--text);margin-bottom:12px;">
+        <button id="checkForgotBtn" class="btn">Далее</button>
+        <div id="forgotResult" style="margin-top:12px;"></div>
+        <button class="btn secondary small" id="closeForgotModal" style="margin-top:8px;">Закрыть</button>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+    document.getElementById('closeForgotModal').addEventListener('click', () => overlay.remove());
+    document.getElementById('checkForgotBtn').addEventListener('click', () => {
+      const login = document.getElementById('forgotLogin').value.trim().toLowerCase();
+      const resultDiv = document.getElementById('forgotResult');
+      if (login === 'kisaru') {
+        resultDiv.innerHTML = '<p style="color:var(--success);">Ваш пароль: <strong>kisaru123</strong></p>';
+      } else {
+        const user = appData.users.find(u => u.login === login);
+        if (!user) return resultDiv.innerHTML = '<p style="color:var(--danger);">Пользователь не найден</p>';
+        resultDiv.innerHTML = `
+          <p>Ответьте на секретный вопрос: <strong>Ваш любимый цвет?</strong></p>
+          <input id="securityAnswer" placeholder="Введите ответ" style="width:100%;padding:10px;border-radius:12px;background:var(--surface2);border:1px solid var(--border);color:var(--text);margin-bottom:8px;">
+          <input id="newPassword" type="password" placeholder="Новый пароль" style="width:100%;padding:10px;border-radius:12px;background:var(--surface2);border:1px solid var(--border);color:var(--text);margin-bottom:8px;">
+          <button id="resetPasswordBtn" class="btn small">Сбросить пароль</button>
+        `;
+        document.getElementById('resetPasswordBtn').addEventListener('click', () => {
+          const answer = document.getElementById('securityAnswer').value.trim().toLowerCase();
+          const newPw = document.getElementById('newPassword').value;
+          if (answer !== 'фиолетовый') return showToast('Неверный ответ на секретный вопрос');
+          if (newPw.length < 6) return showToast('Пароль минимум 6 символов');
+          user.passwordHash = btoa(newPw);
+          saveData();
+          showToast('Пароль изменён!');
+          overlay.remove();
+        });
+      }
+    });
+  }
+
+  function showAllPasswordsModal() {
+    const users = appData.users;
+    let html = '<h4>Все логины и пароли (для разработчика)</h4>';
+    users.forEach(u => {
+      html += `<div>${u.login}: ${atob(u.passwordHash)}</div>`;
+    });
+    const overlay = document.createElement('div');
+    overlay.className = 'modal-overlay';
+    overlay.innerHTML = `<div class="modal">${html}<button class="btn secondary small" id="closeAllPwModal">Закрыть</button></div>`;
+    document.body.appendChild(overlay);
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+    document.getElementById('closeAllPwModal').addEventListener('click', () => overlay.remove());
+  }
+
+  // --- MAIN UI ---
+  function renderMainUI(container) {
+    const data = getUserData();
+    applySettings(data.settings);
+    container.innerHTML = `
+      <div id="tabContent" class="screen active"></div>
+      <div class="bottom-bar" id="bottomBar">
+        <div class="tab-item" data-tab="home"><i class="fa-solid fa-house"></i><span>Главная</span></div>
+        <div class="tab-item" data-tab="clicker"><i class="fa-solid fa-paw"></i><span>Кликер</span></div>
+        <div class="tab-item" data-tab="transfer"><i class="fa-solid fa-arrow-right-arrow-left"></i><span>Переводы</span></div>
+        <div class="tab-item" data-tab="loans"><i class="fa-solid fa-coins"></i><span>Кредиты</span></div>
+        <div class="tab-item" data-tab="deposits"><i class="fa-solid fa-piggy-bank"></i><span>Вклады</span></div>
+        <div class="tab-item" data-tab="crypto"><i class="fa-solid fa-chart-line"></i><span>Крипта</span></div>
+        <div class="tab-item" data-tab="friends"><i class="fa-solid fa-user-group"></i><span>Друзья</span></div>
+        <div class="tab-item" data-tab="chats"><i class="fa-solid fa-comments"></i><span>Чаты</span></div>
+        <div class="tab-item" data-tab="leaderboard"><i class="fa-solid fa-trophy"></i><span>Топ</span></div>
+        <div class="tab-item" data-tab="profile"><i class="fa-solid fa-user"></i><span>Профиль</span></div>
+      </div>
+    `;
+    document.getElementById('bottomBar').addEventListener('click', handleTabClick);
+    renderTab(currentTab);
+  }
+  function handleTabClick(e) {
+    const item = e.target.closest('.tab-item');
+    if (!item) return;
+    const tab = item.dataset.tab;
+    if (tab === currentTab) return;
+    currentTab = tab;
+    document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+    item.classList.add('active');
+    renderTab(tab);
+  }
+  function renderTab(tab) {
+    const content = document.getElementById('tabContent');
+    if (!content) return;
+    switch(tab) {
+      case 'home': renderHome(); break;
+      case 'clicker': renderClicker(); break;
+      case 'transfer': renderTransfer(); break;
+      case 'loans': renderLoans(); break;
+      case 'deposits': renderDeposits(); break;
+      case 'crypto': renderCrypto(); break;
+      case 'friends': renderFriends(); break;
+      case 'chats': renderChats(); break;
+      case 'leaderboard': renderLeaderboard(); break;
+      case 'profile': renderProfile(); break;
+    }
+  }
+
+  // --- SETTINGS ---
+  function applySettings(s) {
+    document.body.classList.toggle('light', s.theme === 'light');
+    document.body.classList.toggle('no-animations', !s.animations);
+    document.documentElement.style.setProperty('--font-size', s.fontSize + 'px');
+  }
+
+  // --- TOAST ---
+  function showToast(msg) {
+    const old = document.querySelector('.toast');
+    if (old) old.remove();
+    const t = document.createElement('div');
+    t.className = 'toast';
+    t.textContent = msg;
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 2500);
+  }
+
+  // --- SPINNER ---
+  function showSpinner(duration=800) {
+    const overlay = document.createElement('div');
+    overlay.className = 'modal-overlay';
+    overlay.innerHTML = '<div style="margin:auto;display:flex;align-items:center;justify-content:center;"><div class="spinner"></div></div>';
+    overlay.style.background = 'rgba(0,0,0,0.5)';
+    document.body.appendChild(overlay);
+    setTimeout(() => overlay.remove(), duration);
+  }
+
+  // --- TIMERS ---
+  function startTimers() {
+    stopTimers();
+    updateCryptoPrices();
+    cryptoTimer = setInterval(updateCryptoPrices, 60000);
+    autoClickTimer = setInterval(() => {
+      const d = getUserData();
+      if (d && d.upgradesPurchased.autoclick) {
+        d.balance += 5; d.totalEarned += 5; updateLevel(d); saveData();
+      }
+    }, 10000);
+    leaderboardTimer = setInterval(() => { if (currentTab === 'leaderboard') renderLeaderboard(); }, 30000);
+  }
+  function stopTimers() {
+    if (cryptoTimer) clearInterval(cryptoTimer);
+    if (autoClickTimer) clearInterval(autoClickTimer);
+    if (leaderboardTimer) clearInterval(leaderboardTimer);
+    cryptoTimer = autoClickTimer = leaderboardTimer = null;
+  }
+  function updateCryptoPrices() {
+    const prices = appData.cryptoPrices;
+    for (let coin in prices) {
+      let change = 0.95 + Math.random() * 0.12;
+      prices[coin] = Math.max(0.01, +(prices[coin] * change).toFixed(2));
+      if (!appData.cryptoHistory[coin]) appData.cryptoHistory[coin] = [];
+      appData.cryptoHistory[coin].push({ time: Date.now(), price: prices[coin] });
+      if (appData.cryptoHistory[coin].length > 24) appData.cryptoHistory[coin].shift();
+    }
+    appData.lastPriceUpdate = Date.now();
+    checkLimitOrders();
+    saveData();
+  }
+  function checkLimitOrders() {
+    for (let login in appData.usersData) {
+      const user = appData.usersData[login];
+      if (!user.orders) continue;
+      user.orders = user.orders.filter(order => {
+        const price = appData.cryptoPrices[order.coin];
+        if ((order.type === 'buy' && price <= order.price) || (order.type === 'sell' && price >= order.price)) {
+          executeOrder(login, order);
+          return false;
+        }
+        return true;
+      });
+    }
+  }
+  function executeOrder(login, order) {
+    const user = appData.usersData[login];
+    if (!user) return;
+    if (order.type === 'buy') {
+      const cost = order.amount * appData.cryptoPrices[order.coin];
+      if (user.balance >= cost) {
+        user.balance -= cost;
+        user.cryptoWallet[order.coin] = (user.cryptoWallet[order.coin]||0) + order.amount;
+        user.cryptoTransactions.push(`Лимитный ордер: куплено ${order.amount} ${order.coin} по ${order.price}`);
+      }
+    } else {
+      if ((user.cryptoWallet[order.coin]||0) >= order.amount) {
+        user.cryptoWallet[order.coin] -= order.amount;
+        user.balance += order.amount * appData.cryptoPrices[order.coin] * 0.99;
+        user.cryptoTransactions.push(`Лимитный ордер: продано ${order.amount} ${order.coin} по ${order.price}`);
+      }
+    }
+  }
+
+  // --- HOME ---
+  function renderHome() {
+    const d = getUserData();
+    const content = document.getElementById('tabContent');
+    content.innerHTML = `
+      <h3 style="font-weight:700;">👑 Империя Кисару Банк</h3>
+      <div class="glass-card" style="text-align:center;">
+        <div style="font-size:0.9rem;color:var(--text2);">БАЛАНС</div>
+        <div class="balance-display">${d.balance.toFixed(2)} ₥</div>
+        <div>Уровень ${d.level}</div>
+      </div>
+      <div class="glass-card">
+        <h4>Последние курсы</h4>
+        ${['KSUR','MEC','CLAW'].map(c=>`<div style="display:flex;justify-content:space-between;">${c}: ${appData.cryptoPrices[c].toFixed(4)} ₥</div>`).join('')}
+      </div>
+    `;
+  }
+
+  // --- CLICKER ---
+  function renderClicker() {
+    const d = getUserData();
+    const content = document.getElementById('tabContent');
+    content.innerHTML = `
+      <h3>Кликер 🐾</h3>
+      <div class="glass-card" style="text-align:center;">
+        <div class="coin-clicker" id="bigCoin" style="width:120px;height:120px;border-radius:50%;background:linear-gradient(135deg,var(--primary),#e0b0ff);margin:20px auto;display:flex;align-items:center;justify-content:center;font-size:2.5rem;font-weight:900;color:#fff;cursor:pointer;">₥</div>
+        <div>Сила клика: ${d.clickPower}</div>
+        <button id="dailyBonusBtn" class="btn small secondary" style="margin-top:8px;">Ежедневный бонус</button>
+      </div>
+      <div class="glass-card">
+        <h4>Улучшения</h4>
+        ${renderUpgrade('power1','+1 к клику',50,'🐭')}
+        ${renderUpgrade('power2','+2 к клику',200,'🐱')}
+        ${renderUpgrade('double','Удвоение силы',1000,'✨')}
+        ${renderUpgrade('autoclick','Авто-кликер (+5/10с)',5000,'🤖')}
+      </div>
+    `;
+    document.getElementById('bigCoin').addEventListener('click', handleCoinClick);
+    document.getElementById('dailyBonusBtn').addEventListener('click', claimDailyBonus);
+    document.querySelectorAll('.buy-upgrade').forEach(b => b.addEventListener('click', handleBuyUpgrade));
+  }
+  function renderUpgrade(key, name, cost, icon) {
+    const d = getUserData();
+    const purchased = d.upgradesPurchased[key];
+    return `<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);"><span>${icon} ${name} <span class="badge">${cost} ₥</span></span><button class="btn small ${purchased?'secondary':'btn'} buy-upgrade" data-key="${key}" data-cost="${cost}" ${purchased?'disabled':''}>${purchased?'Куплено':'Купить'}</button></div>`;
+  }
+  function handleCoinClick(e) {
+    const d = getUserData();
+    d.balance += d.clickPower; d.totalEarned += d.clickPower; d.totalClicks = (d.totalClicks||0)+1;
+    updateLevel(d); saveData();
+    const float = document.createElement('div'); float.className='toast'; float.textContent='+'+d.clickPower; float.style.top=e.clientY+'px'; float.style.left=e.clientX+'px'; document.body.appendChild(float); setTimeout(()=>float.remove(),1000);
+  }
+  function claimDailyBonus() {
+    const d = getUserData();
+    const today = new Date().toDateString();
+    if (d.lastDailyBonus === today) return showToast('Уже получен');
+    const bonus = 10 + d.level*2;
+    d.balance += bonus; d.totalEarned += bonus; d.lastDailyBonus = today;
+    updateLevel(d); saveData();
+    showToast(`+${bonus} ₥`);
+    renderClicker();
+  }
+  function handleBuyUpgrade(e) {
+    const key = e.target.dataset.key;
+    const cost = parseInt(e.target.dataset.cost);
+    const d = getUserData();
+    if (d.balance < cost) return showToast('Недостаточно меулов');
+    d.balance -= cost;
+    d.upgradesPurchased[key] = true;
+    if (key==='power1') d.clickPower+=1;
+    if (key==='power2') d.clickPower+=2;
+    if (key==='double') d.clickPower*=2;
+    saveData();
+    renderClicker();
+  }
+
+  // --- TRANSFER ---
+  function renderTransfer() {
+    const d = getUserData();
+    const content = document.getElementById('tabContent');
+    content.innerHTML = `
+      <h3>Переводы 💸</h3>
+      <div class="glass-card">
+        <h4>Быстрый перевод друзьям</h4>
+        <div id="friendsQuickList"></div>
+      </div>
+      <div class="glass-card">
+        <h4>Перевод по логину</h4>
+        <form id="transferForm">
+          <input name="recipient" placeholder="Логин получателя" required style="width:100%;padding:12px;border-radius:12px;background:var(--surface2);border:1px solid var(--border);color:var(--text);margin-bottom:8px;">
+          <input name="amount" type="number" placeholder="Сумма (₥)" required style="width:100%;padding:12px;border-radius:12px;background:var(--surface2);border:1px solid var(--border);color:var(--text);margin-bottom:8px;">
+          <input name="message" placeholder="Сообщение" style="width:100%;padding:12px;border-radius:12px;background:var(--surface2);border:1px solid var(--border);color:var(--text);margin-bottom:8px;">
+          <button type="submit" class="btn">Перевести</button>
+        </form>
+      </div>
+    `;
+    const friends = d.friends || [];
+    const list = document.getElementById('friendsQuickList');
+    if (friends.length) {
+      list.innerHTML = friends.map(f => `<button class="btn small secondary quick-transfer-btn" data-login="${f}" style="margin:4px;">${f}</button>`).join('');
+      document.querySelectorAll('.quick-transfer-btn').forEach(b => b.addEventListener('click', (e)=>{
+        document.querySelector('input[name="recipient"]').value = e.target.dataset.login;
+      }));
+    } else list.innerHTML = '<p style="color:var(--text2);">Нет друзей</p>';
+    document.getElementById('transferForm').addEventListener('submit', handleTransfer);
+  }
+  function handleTransfer(e) {
+    e.preventDefault();
+    const recip = e.target.recipient.value.trim().toLowerCase();
+    const amount = parseFloat(e.target.amount.value);
+    const msg = e.target.message.value;
+    const d = getUserData();
+    if (recip === currentUser) return showToast('Нельзя себе');
+    if (!appData.usersData[recip]) return showToast('Пользователь не найден');
+    if (isNaN(amount) || amount<=0) return showToast('Некорректная сумма');
+    const fee = Math.max(1, amount * 0.005);
+    if (d.balance < amount+fee) return showToast('Недостаточно средств');
+    showSpinner(500);
+    d.balance -= (amount+fee);
+    appData.usersData[recip].balance += amount;
+    const now = new Date().toLocaleString();
+    d.transactionsHistory.push({type:'sent',to:recip,amount,fee,msg,date:now});
+    appData.usersData[recip].transactionsHistory.push({type:'received',from:currentUser,amount,msg,date:now});
+    updateLevel(d); updateLevel(appData.usersData[recip]);
+    saveData();
+    showToast(`Перевод ${amount} ₥ выполнен`);
+    renderTransfer();
+  }
+
+  // --- LOANS ---
+  function renderLoans() {
+    const d = getUserData();
+    processOverdueLoans();
+    const content = document.getElementById('tabContent');
+    content.innerHTML = `
+      <h3>Кредиты 🏦</h3>
+      <div class="glass-card">
+        <form id="loanForm">
+          <input name="amount" placeholder="Сумма (100-50000)" type="number" required style="width:100%;padding:12px;border-radius:12px;background:var(--surface2);border:1px solid var(--border);color:var(--text);margin-bottom:8px;">
+          <input name="days" placeholder="Срок (дней, 7-365)" type="number" required style="width:100%;padding:12px;border-radius:12px;background:var(--surface2);border:1px solid var(--border);color:var(--text);margin-bottom:8px;">
+          <button type="submit" class="btn">Взять кредит</button>
+        </form>
+      </div>
+      <div class="glass-card">
+        <h4>Активные (${(d.activeLoans||[]).length}/2)</h4>
+        ${(d.activeLoans||[]).map((l,i)=>`<div>${l.amount}₥ | ${l.days}д | Остаток: ${getRemaining(l).toFixed(2)} <button class="btn small danger pay-loan" data-index="${i}">Погасить</button></div>`).join('')}
+      </div>
+    `;
+    document.getElementById('loanForm').addEventListener('submit', handleLoan);
+    document.querySelectorAll('.pay-loan').forEach(b=>b.addEventListener('click',(e)=>{
+      const i = e.target.dataset.index;
+      const loan = d.activeLoans[i];
+      const rem = getRemaining(loan);
+      if (d.balance < rem) return showToast('Недостаточно средств');
+      d.balance -= rem;
+      d.activeLoans.splice(i,1);
+      saveData(); renderLoans();
+    }));
+  }
+  function processOverdueLoans() {
+    const d = getUserData();
+    if (!d.activeLoans) return;
+    const now = new Date();
+    d.activeLoans.forEach(l=>{
+      if (new Date(l.endDate) < now && l.remaining>0) {
+        l.remaining += l.remaining*0.01;
+        l.lastPenalty = now.toISOString();
+      }
+    });
+    saveData();
+  }
+  function getRemaining(l) { return l.remaining || l.totalPayable; }
+  function handleLoan(e) {
+    e.preventDefault();
+    const d = getUserData();
+    if ((d.activeLoans||[]).length>=2) return showToast('Макс. 2 кредита');
+    const amount = parseFloat(e.target.amount.value);
+    const days = parseInt(e.target.days.value);
+    if (isNaN(amount)||amount<100||amount>50000) return showToast('Сумма 100-50000');
+    if (isNaN(days)||days<7||days>365) return showToast('Срок 7-365');
+    if (amount > d.balance*5) return showToast('Сумма > 5× баланса');
+    const months = days/30;
+    const rate = 0.05;
+    const monthly = (amount*rate)/(1-Math.pow(1+rate,-months));
+    const total = monthly*months;
+    d.activeLoans.push({amount,days,monthlyPayment:monthly,totalPayable:total,remaining:total,startDate:new Date().toISOString(),endDate:new Date(Date.now()+days*86400000).toISOString()});
+    d.balance += amount; d.totalEarned += amount;
+    updateLevel(d); saveData();
+    showToast('Кредит выдан');
+    renderLoans();
+  }
+
+  // --- DEPOSITS ---
+  function renderDeposits() {
+    const d = getUserData();
+    processDeposits();
+    const content = document.getElementById('tabContent');
+    content.innerHTML = `
+      <h3>Вклады 💰</h3>
+      <div class="glass-card">
+        <form id="depositForm">
+          <input name="amount" placeholder="Сумма (мин 50)" type="number" required style="width:100%;padding:12px;border-radius:12px;background:var(--surface2);border:1px solid var(--border);color:var(--text);margin-bottom:8px;">
+          <select name="term" style="width:100%;padding:12px;border-radius:12px;background:var(--surface2);border:1px solid var(--border);color:var(--text);margin-bottom:8px;">
+            <option value="30">30 дней (3%)</option><option value="90">90 дней (5%)</option><option value="180">180 дней (6.5%)</option><option value="365">365 дней (8%)</option>
+          </select>
+          <button type="submit" class="btn">Открыть вклад</button>
+        </form>
+      </div>
+      <div class="glass-card">
+        <h4>Активные (${(d.deposits||[]).length}/3)</h4>
+        ${(d.deposits||[]).map((dep,i)=>`<div>${dep.amount}₥ | ${dep.term}д | ${dep.rate}% <button class="btn small danger close-dep" data-index="${i}">Закрыть</button></div>`).join('')}
+      </div>
+    `;
+    document.getElementById('depositForm').addEventListener('submit', handleDeposit);
+    document.querySelectorAll('.close-dep').forEach(b=>b.addEventListener('click',(e)=>{
+      const i = e.target.dataset.index;
+      const dep = d.deposits[i];
+      d.balance += dep.amount*0.95;
+      d.deposits.splice(i,1);
+      saveData(); renderDeposits();
+    }));
+  }
+  function processDeposits() {
+    const d = getUserData();
+    if (!d.deposits) return;
+    const now = new Date();
+    d.deposits = d.deposits.filter(dep=>{
+      if (new Date(dep.endDate) <= now) {
+        d.balance += dep.maturedAmount;
+        d.totalEarned += dep.maturedAmount - dep.amount;
+        updateLevel(d);
+        return false;
+      }
+      return true;
+    });
+    saveData();
+  }
+  function handleDeposit(e) {
+    e.preventDefault();
+    const d = getUserData();
+    if ((d.deposits||[]).length>=3) return showToast('Макс. 3 вклада');
+    const amount = parseFloat(e.target.amount.value);
+    if (isNaN(amount)||amount<50) return showToast('Мин. 50');
+    if (amount>d.balance) return showToast('Недостаточно средств');
+    const term = parseInt(e.target.term.value);
+    const baseRate = term===30?3:term===90?5:term===180?6.5:8;
+    const rate = baseRate + d.level*0.05;
+    d.balance -= amount;
+    const matured = amount*(1+rate/100*term/365);
+    d.deposits.push({amount,term,rate,startDate:new Date().toISOString(),endDate:new Date(Date.now()+term*86400000).toISOString(),maturedAmount:matured});
+    updateLevel(d); saveData();
+    showToast('Вклад открыт');
+    renderDeposits();
+  }
+
+  // --- CRYPTO ---
+  function renderCrypto() {
+    const d = getUserData();
+    const content = document.getElementById('tabContent');
+    content.innerHTML = `
+      <h3>Криптобиржа 📈</h3>
+      ${['KSUR','MEC','CLAW'].map(coin=>{
+        const price = appData.cryptoPrices[coin];
+        const bal = d.cryptoWallet[coin]||0;
+        return `
+        <div class="glass-card">
+          <strong>${coin} (${coin==='KSUR'?'🐱':coin==='MEC'?'💎':'🐾'})</strong> ${price.toFixed(4)} ₥
+          <div class="chart-container" id="chart-${coin}"></div>
+          <div>Кошелёк: ${bal.toFixed(6)} (≈ ${(bal*price).toFixed(2)} ₥)</div>
+          <input placeholder="Сумма в ₥" id="buyInput-${coin}" style="width:100%;padding:8px;border-radius:12px;background:var(--surface2);border:1px solid var(--border);color:var(--text);margin:4px 0;">
+          <button class="btn small buy-crypto-btn" data-coin="${coin}">Купить</button>
+          <button class="btn small secondary sell-crypto-btn" data-coin="${coin}">Продать</button>
+          <button class="btn small secondary limit-order-btn" data-coin="${coin}">Лимитный ордер</button>
+        </div>`;
+      }).join('')}
+      <div class="glass-card"><h4>Мои ордера</h4>${(d.orders||[]).map((o,i)=>`<div>${o.type} ${o.amount} ${o.coin} по ${o.price} <button class="btn small danger cancel-order" data-index="${i}">Отмена</button></div>`).join('')}</div>
+    `;
+    document.querySelectorAll('.buy-crypto-btn').forEach(b=>b.addEventListener('click',()=>handleCryptoBuySell(b.dataset.coin,'buy')));
+    document.querySelectorAll('.sell-crypto-btn').forEach(b=>b.addEventListener('click',()=>handleCryptoBuySell(b.dataset.coin,'sell')));
+    document.querySelectorAll('.limit-order-btn').forEach(b=>b.addEventListener('click',()=>showLimitOrderModal(b.dataset.coin)));
+    document.querySelectorAll('.cancel-order').forEach(b=>b.addEventListener('click',(e)=>{
+      const i = e.target.dataset.index;
+      d.orders.splice(i,1); saveData(); renderCrypto();
+    }));
+    drawCharts();
+  }
+  function handleCryptoBuySell(coin, action) {
+    const input = document.getElementById(`buyInput-${coin}`);
+    const amount = parseFloat(input.value);
+    if (isNaN(amount)||amount<=0) return showToast('Введите сумму');
+    const d = getUserData();
+    const price = appData.cryptoPrices[coin];
+    if (action==='buy') {
+      if (d.balance < amount) return showToast('Недостаточно меулов');
+      const fee = amount*0.01;
+      d.balance -= amount;
+      d.cryptoWallet[coin] = (d.cryptoWallet[coin]||0) + (amount-fee)/price;
+    } else {
+      const maxSell = (d.cryptoWallet[coin]||0)*price;
+      if (maxSell<=0) return showToast('Нет монет');
+      const coinAmount = Math.min(amount/price, d.cryptoWallet[coin]||0);
+      d.cryptoWallet[coin] -= coinAmount;
+      d.balance += coinAmount*price*0.99;
+    }
+    saveData(); renderCrypto();
+  }
+  function showLimitOrderModal(coin) {
+    const overlay = document.createElement('div'); overlay.className='modal-overlay';
+    overlay.innerHTML = `<div class="modal"><h4>Лимитный ордер на ${coin}</h4>
+      <select id="orderType"><option value="buy">Купить</option><option value="sell">Продать</option></select>
+      <input id="orderAmount" placeholder="Количество монет" type="number" step="any" style="width:100%;margin:8px 0;padding:10px;border-radius:12px;background:var(--surface2);border:1px solid var(--border);color:var(--text);">
+      <input id="orderPrice" placeholder="Цена (₥)" type="number" step="any" style="width:100%;margin:8px 0;padding:10px;border-radius:12px;background:var(--surface2);border:1px solid var(--border);color:var(--text);">
+      <button class="btn" id="placeOrderBtn">Разместить</button></div>`;
+    document.body.appendChild(overlay);
+    overlay.addEventListener('click',(e)=>{ if(e.target===overlay) overlay.remove(); });
+    document.getElementById('placeOrderBtn').addEventListener('click',()=>{
+      const type = document.getElementById('orderType').value;
+      const amount = parseFloat(document.getElementById('orderAmount').value);
+      const price = parseFloat(document.getElementById('orderPrice').value);
+      if (isNaN(amount)||amount<=0||isNaN(price)||price<=0) return showToast('Некорректные данные');
+      const d = getUserData();
+      d.orders.push({type,coin,amount,price});
+      saveData(); overlay.remove(); renderCrypto();
+    });
+  }
+  function drawCharts() {
+    for (let coin in appData.cryptoHistory) {
+      const container = document.getElementById(`chart-${coin}`);
+      if (!container) continue;
+      const data = appData.cryptoHistory[coin] || [];
+      if (data.length<2) { container.innerHTML='<small>Недостаточно данных</small>'; continue; }
+      const min = Math.min(...data.map(d=>d.price));
+      const max = Math.max(...data.map(d=>d.price));
+      const range = max-min || 1;
+      const points = data.map((d,i)=>`${i/(data.length-1)*100},${100-(d.price-min)/range*100}`).join(' ');
+      container.innerHTML = `<svg width="100%" height="60"><polyline points="${points}" fill="none" stroke="var(--primary)" stroke-width="2"/></svg>`;
+    }
+  }
+
+  // --- FRIENDS ---
+  function renderFriends() {
+    const d = getUserData();
+    const content = document.getElementById('tabContent');
+    content.innerHTML = `
+      <h3>Друзья 👥</h3>
+      <div class="glass-card">
+        <input id="friendSearch" placeholder="Поиск по логину" style="width:100%;padding:10px;border-radius:12px;background:var(--surface2);border:1px solid var(--border);color:var(--text);margin-bottom:8px;">
+        <button id="sendFriendRequestBtn" class="btn small">Отправить заявку</button>
+      </div>
+      <div class="glass-card"><h4>Входящие заявки</h4><div id="incomingRequests"></div></div>
+      <div class="glass-card"><h4>Мои друзья</h4><div id="friendsList"></div></div>
+    `;
+    document.getElementById('sendFriendRequestBtn').addEventListener('click',()=>{
+      const login = document.getElementById('friendSearch').value.trim().toLowerCase();
+      if (!login || login===currentUser) return showToast('Некорректный логин');
+      if (!appData.usersData[login]) return showToast('Пользователь не найден');
+      if (d.friends.includes(login)) return showToast('Уже в друзьях');
+      if (d.friendRequests.outgoing.includes(login)) return showToast('Заявка уже отправлена');
+      d.friendRequests.outgoing.push(login);
+      appData.usersData[login].friendRequests.incoming.push(currentUser);
+      saveData(); renderFriends();
+    });
+    renderFriendLists();
+  }
+  function renderFriendLists() {
+    const d = getUserData();
+    const inc = document.getElementById('incomingRequests');
+    const fl = document.getElementById('friendsList');
+    if (inc) inc.innerHTML = (d.friendRequests.incoming||[]).map(f=>`<div>${f} <button class="btn small accept-req" data-login="${f}">Принять</button> <button class="btn small danger decline-req" data-login="${f}">Отклонить</button></div>`).join('');
+    if (fl) fl.innerHTML = (d.friends||[]).map(f=>`<div>${f}</div>`).join('');
+    document.querySelectorAll('.accept-req').forEach(b=>b.addEventListener('click',(e)=>{
+      const f = e.target.dataset.login;
+      d.friendRequests.incoming = d.friendRequests.incoming.filter(x=>x!==f);
+      d.friends.push(f);
+      const other = appData.usersData[f];
+      other.friendRequests.outgoing = other.friendRequests.outgoing.filter(x=>x!==currentUser);
+      other.friends.push(currentUser);
+      saveData(); renderFriends();
+    }));
+    document.querySelectorAll('.decline-req').forEach(b=>b.addEventListener('click',(e)=>{
+      const f = e.target.dataset.login;
+      d.friendRequests.incoming = d.friendRequests.incoming.filter(x=>x!==f);
+      appData.usersData[f].friendRequests.outgoing = appData.usersData[f].friendRequests.outgoing.filter(x=>x!==currentUser);
+      saveData(); renderFriends();
+    }));
+  }
+
+  // --- CHATS ---
+  function renderChats() {
+    const d = getUserData();
+    const content = document.getElementById('tabContent');
+    content.innerHTML = `
+      <h3>Чаты 💬</h3>
+      <div class="glass-card" id="chatList"></div>
+      <div class="glass-card" id="chatWindow" style="display:none;"></div>
+    `;
+    const list = document.getElementById('chatList');
+    list.innerHTML = (d.friends||[]).map(f=>{
+      const unread = countUnread(f);
+      return `<div class="chat-friend-btn" data-friend="${f}" style="padding:10px;border-bottom:1px solid var(--border);cursor:pointer;">${f} ${unread>0?`<span style="color:red;">(${unread})</span>`:''}</div>`;
+    }).join('');
+    document.querySelectorAll('.chat-friend-btn').forEach(b=>b.addEventListener('click',(e)=>openChat(e.target.dataset.friend)));
+  }
+  function countUnread(friend) {
+    const d = getUserData();
+    if (!d.chats[friend]) return 0;
+    return d.chats[friend].filter(m=>m.to===currentUser && !m.read).length;
+  }
+  function openChat(friend) {
+    const d = getUserData();
+    if (!d.chats[friend]) d.chats[friend] = [];
+    d.chats[friend].forEach(m=>{ if(m.to===currentUser) m.read=true; });
+    saveData();
+    const window = document.getElementById('chatWindow');
+    window.style.display='block';
+    window.innerHTML = `
+      <h4>Чат с ${friend}</h4>
+      <div id="messages" style="max-height:300px;overflow-y:auto;margin-bottom:8px;">${d.chats[friend].map(m=>`<div><strong>${m.from}:</strong> ${m.text} <small>${new Date(m.date).toLocaleTimeString()}</small></div>`).join('')}</div>
+      <input id="chatInput" placeholder="Сообщение..." style="width:100%;padding:10px;border-radius:12px;background:var(--surface2);border:1px solid var(--border);color:var(--text);">
+      <button id="sendChatBtn" class="btn small">Отправить</button>
+    `;
+    document.getElementById('sendChatBtn').addEventListener('click',()=>{
+      const text = document.getElementById('chatInput').value.trim();
+      if (!text) return;
+      const msg = {from:currentUser, to:friend, text, date:Date.now(), read:false};
+      d.chats[friend].push(msg);
+      if (!appData.usersData[friend].chats[currentUser]) appData.usersData[friend].chats[currentUser] = [];
+      appData.usersData[friend].chats[currentUser].push({...msg, read:false});
+      saveData();
+      openChat(friend);
+    });
+  }
+
+  // --- LEADERBOARD ---
+  function renderLeaderboard() {
+    const content = document.getElementById('tabContent');
+    const list = [];
+    for (let login in appData.usersData) {
+      const u = appData.usersData[login];
+      const cryptoWorth = (u.cryptoWallet.KSUR||0)*appData.cryptoPrices.KSUR + (u.cryptoWallet.MEC||0)*appData.cryptoPrices.MEC + (u.cryptoWallet.CLAW||0)*appData.cryptoPrices.CLAW;
+      list.push({login, wealth: u.balance + cryptoWorth});
+    }
+    list.sort((a,b)=>b.wealth-a.wealth);
+    content.innerHTML = `<h3>🏆 Лидерборд</h3><div class="glass-card">${list.slice(0,10).map((u,i)=>`<div>${i+1}. ${u.login} — ${u.wealth.toFixed(2)} ₥</div>`).join('')}</div>`;
+  }
+
+  // --- PROFILE ---
+  function renderProfile() {
+    const d = getUserData();
+    const content = document.getElementById('tabContent');
+    const isOwner = currentUser === 'kisaru';
+    content.innerHTML = `
+      <h3>Профиль ${isOwner?'<span class="crown" id="ownerCrown">👑</span>':''}</h3>
+      <div class="glass-card">
+        <p>Логин: <span style="color:${d.nicknameColor}">${currentUser}</span></p>
+        <p>Баланс: ${d.balance.toFixed(2)} ₥</p>
+        <p>Уровень: ${d.level}</p>
+      </div>
+      <div class="glass-card">
+        <h4>Настройки</h4>
+        <label>Тема: <select id="themeSelect"><option value="dark" ${d.settings.theme==='dark'?'selected':''}>Тёмная</option><option value="light" ${d.settings.theme==='light'?'selected':''}>Светлая</option></select></label>
+        <label>Размер шрифта: <input type="range" id="fontSizeRange" min="14" max="22" value="${d.settings.fontSize}"></label>
+        <label><input type="checkbox" id="animationsCheck" ${d.settings.animations?'checked':''}> Анимации</label>
+        <div>Цвет ника: ${['#8A2BE2','#FFD700','#FF4500','#00CED1','#FF69B4','#32CD32','#1E90FF','#FFA500'].map(c=>`<span class="nickname-color-option${d.nicknameColor===c?' selected':''}" style="background:${c};" data-color="${c}"></span>`).join('')}</div>
+        <button id="saveSettingsBtn" class="btn small">Сохранить</button>
+        <button id="resetDataBtn" class="btn small danger">Сбросить данные</button>
+        <button id="exportBtn" class="btn small secondary">Экспорт</button>
+        <input type="file" id="importFile" accept=".json" style="display:none;"><button id="importBtn" class="btn small secondary">Импорт</button>
+      </div>
+      <button id="logoutBtn" class="btn danger" style="width:100%;">Выйти</button>
+    `;
+    if (isOwner) document.getElementById('ownerCrown').addEventListener('click',()=>{
+      showToast('Корона владельца, этот пользователь владеет банком');
+    });
+    document.getElementById('themeSelect').addEventListener('change',(e)=>d.settings.theme=e.target.value);
+    document.getElementById('fontSizeRange').addEventListener('input',(e)=>d.settings.fontSize=parseInt(e.target.value));
+    document.getElementById('animationsCheck').addEventListener('change',(e)=>d.settings.animations=e.target.checked);
+    document.querySelectorAll('.nickname-color-option').forEach(el=>el.addEventListener('click',(e)=>{
+      d.nicknameColor = e.target.dataset.color; renderProfile();
+    }));
+    document.getElementById('saveSettingsBtn').addEventListener('click',()=>{
+      applySettings(d.settings); saveData(); showToast('Настройки сохранены');
+    });
+    document.getElementById('resetDataBtn').addEventListener('click',()=>{
+      if(confirm('Сбросить все данные?')) { localStorage.clear(); location.reload(); }
+    });
+    document.getElementById('exportBtn').addEventListener('click',()=>{
+      const blob = new Blob([JSON.stringify(appData)],{type:'application/json'});
+      const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='kisaru_backup.json'; a.click();
+    });
+    document.getElementById('importBtn').addEventListener('click',()=>document.getElementById('importFile').click());
+    document.getElementById('importFile').addEventListener('change',(e)=>{
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev)=>{
+        try { appData = JSON.parse(ev.target.result); saveData(); alert('Импорт выполнен'); location.reload(); } catch(ex) { alert('Ошибка импорта'); }
+      };
+      reader.readAsText(file);
+    });
+    document.getElementById('logoutBtn').addEventListener('click', logout);
+  }
+
+  // --- INIT ---
+  loadData();
+  renderApp();
+})();
+</script>
+</body>
+</html>
